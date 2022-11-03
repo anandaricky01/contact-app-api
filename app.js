@@ -31,7 +31,7 @@ app.get("/", (req, res) => {
 });
 
 // daftarkan routes yang telah ditulis pada app/routes
-require('./app/routes/post.routes')(app);
+require('./app/controllers/contact.controller')(app);
 
 app.listen(PORT, () => {
   console.log(`Mongo Contact App | Listening at http://localhost:${PORT}`);
