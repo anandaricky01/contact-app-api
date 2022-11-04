@@ -7,5 +7,6 @@ const db = {};
 db.mongoose = mongoose;
 db.url = dbConfig.url;
 db.contacts = require("./contact.model")(mongoose);
+db.users = require("./user.model")(mongoose);
 
 module.exports = db;
