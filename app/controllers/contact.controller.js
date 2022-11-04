@@ -1,5 +1,6 @@
 module.exports = (app) => {
   const router = require("express").Router();
+  const {authenticateToken} = require('../middleware/auth.middleware');
   const db = require("../models");
   const { body, validationResult } = require("express-validator");
   const Contact = db.contacts;
@@ -37,7 +38,7 @@ module.exports = (app) => {
   });
 
   // store data
-  router.post("/", body("phone").isMobilePhone(), async (req, res) => {
+  router.post("/", authenticateToken ,body("phone").isMobilePhone(), async (req, res) => {
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -71,7 +72,7 @@ module.exports = (app) => {
   });
 
   // edit exist data
-  router.put("/:_id", body("phone").isMobilePhone(), async (req, res) => {
+  router.put("/:_id", authenticateToken, body("phone").isMobilePhone(), async (req, res) => {
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -99,7 +100,7 @@ module.exports = (app) => {
   });
 
   // delete data
-  router.delete("/:_id", (req, res) => {
+  router.delete("/:_id", authenticateToken, (req, res) => {
     Contact.deleteOne({ _id: req.params._id })
       .then((result) => {
         console.log(result);
