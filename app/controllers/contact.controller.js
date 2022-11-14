@@ -4,6 +4,12 @@ module.exports = (app) => {
   const db = require("../models");
   const { body, validationResult } = require("express-validator");
   const Contact = db.contacts;
+  const Redis = require('redis');
+
+  const redisClient = Redis.createClient();
+
+  // constanta
+  const DEFAULT_EXP = 3600;
 
   // get all data
   router.get("/", (req, res) => {
@@ -28,7 +34,16 @@ module.exports = (app) => {
     })
       .then((result) => {
         console.log("result : ", result);
-        res.send(result);
+        redisClient.get(`datas:${result._id}`, (err, datas) => {
+          if(err) console.log(err)
+          if(datas != null) {
+            console.log(datas);
+            return res.send(JSON.parse(datas));
+          } else {
+            redisClient.setex(`datas:${result._id}`, DEFAULT_EXP, JSON.stringify(result));
+            return res.send(result);
+          }
+        });
       })
       .catch((err) => {
         res.status(500).send({
